@@ -5,6 +5,8 @@ from obspy.io.segy.core import _read_segy
 
 from scipy import signal
 
+from DASLowFreqProcessing import spool,terra_io,lfproc
+
 import warnings
 warnings.simplefilter('ignore')
 
@@ -35,10 +37,7 @@ class data:
         self.edtime = np.datetime64(str(self.st[0].stats.endtime)[0:-1])
         
     def read_data(self, datapath: str) -> None:
-        '''
-        Read in the DAS data with matching time with the sweep data
-        Requires read_sweep() to have run beforehand
-        '''
+        #Read in the DAS data with matching time with the sweep data
         sp = terra_io.create_spool(datapath)
         sp.get_time_segments()
 
@@ -79,12 +78,14 @@ class data:
         plt.xlabel("Time (UTC)")
         plt.show()
         
-    def plot(self, scale = 0.01) -> None:
+    def plot(self, data, scale = 0.01) -> None:    # here can fix the correlated data
         '''
         Plots the DAS data using waterfall scaled at scale
         '''
-        self.DASdata.viz.waterfall(scale = scale)
-        plt.show()
+        
+        plt.figure(figsize = (7,7))
+        plt.imshow(data, cmap = 'seismic', interpolation = 'nearest', aspect = 'auto', extent = (1.54, 1023.3091457785043, 0.06, 0))
+        plt.colorbar()
                
     def correlate(self) -> None:
         '''
